@@ -15,6 +15,6 @@ namespace Final.Service
                 conn = new MySqlConnection("server = 112.74.204.135;user id=root;password=sty970323;database=NET");
             return conn;
         }
-        private Connection() { }
+        private Connection() {}
     }
 }

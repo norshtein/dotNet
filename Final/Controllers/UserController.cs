@@ -6,28 +6,36 @@ using System.Net.Http;
 using System.Web.Http;
 using Final.Service;
 using Final.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Final.Controllers
 {
     public class UserController : ApiController
     {
-        public UserModel[] Get(int id)
+        public string Get(string token)
         {
-        }
+            JObject json;
+            UserModel user = UserService.getUserByToken(token);
+            if(user == null)
+            {
+                json = JObject.FromObject(new 
+                    {
+                        getSelfConfig = "token not found"
+                    });
+            }
+            else
+            {
+                json = JObject.FromObject(new
+                    {
+                        username = user.UserName,
+                        userid = user.UserId,
+                        avatar = user.Avatar,
+                        signature = user.Signature
+                    });
+            }
 
-        public UserModel[] Get()
-        {
-            NETEntities1 ctx = new NETEntities1();
-            var query = from s in ctx.user
-                        select new UserModel
-                        {
-                            UserId = s.userId,
-                            UserName = s.userName,
-                            Avatar = s.avatar,
-                            Signature = s.signature,
-                            Password = s.password
-                        };
-            return query.ToArray();
+            return json.ToString();
         }
     }
 }
