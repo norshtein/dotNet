@@ -1,0 +1,344 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="NETModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.6" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="comments">
+          <Key>
+            <PropertyRef Name="commentId" />
+          </Key>
+          <Property Name="commentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="userId" Type="int" />
+          <Property Name="postId" Type="int" />
+          <Property Name="content" Type="varchar" MaxLength="500" />
+          <Property Name="time" Type="datetime" Precision="0" />
+        </EntityType>
+        <EntityType Name="group">
+          <Key>
+            <PropertyRef Name="groupId" />
+          </Key>
+          <Property Name="groupId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="groupName" Type="varchar" MaxLength="45" />
+          <Property Name="starNum" Type="varchar" MaxLength="45" />
+        </EntityType>
+        <EntityType Name="post">
+          <Key>
+            <PropertyRef Name="postId" />
+          </Key>
+          <Property Name="postId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="userId" Type="int" />
+          <Property Name="groupId" Type="int" />
+          <Property Name="content" Type="blob" />
+          <Property Name="time" Type="datetime" Precision="0" />
+          <Property Name="title" Type="varchar" MaxLength="200" />
+          <Property Name="starNum" Type="int" />
+        </EntityType>
+        <EntityType Name="star">
+          <Key>
+            <PropertyRef Name="starId" />
+          </Key>
+          <Property Name="starId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="userName" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="postId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="user">
+          <Key>
+            <PropertyRef Name="userId" />
+          </Key>
+          <Property Name="userId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="userName" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="avatar" Type="varchar" MaxLength="45" />
+          <Property Name="signature" Type="varchar" MaxLength="45" />
+          <Property Name="password" Type="varchar" MaxLength="45" />
+        </EntityType>
+        <Association Name="author">
+          <End Role="user" Type="Self.user" Multiplicity="0..1" />
+          <End Role="post" Type="Self.post" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="user">
+              <PropertyRef Name="userId" />
+            </Principal>
+            <Dependent Role="post">
+              <PropertyRef Name="userId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="group1">
+          <End Role="group" Type="Self.group" Multiplicity="0..1" />
+          <End Role="post" Type="Self.post" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="group">
+              <PropertyRef Name="groupId" />
+            </Principal>
+            <Dependent Role="post">
+              <PropertyRef Name="groupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="starpost">
+          <End Role="post" Type="Self.post" Multiplicity="1" />
+          <End Role="star" Type="Self.star" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="post">
+              <PropertyRef Name="postId" />
+            </Principal>
+            <Dependent Role="star">
+              <PropertyRef Name="postId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <!--生成过程中发现错误:
+警告 6035: 关系“staruser”在关系主端上有一些列不属于表的键的一部分。已排除了此关系。
+        <Association Name="staruser" />-->
+        <Association Name="user1">
+          <End Role="user" Type="Self.user" Multiplicity="0..1" />
+          <End Role="comments" Type="Self.comments" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="user">
+              <PropertyRef Name="userId" />
+            </Principal>
+            <Dependent Role="comments">
+              <PropertyRef Name="userId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="NETModelStoreContainer">
+          <EntitySet Name="comments" EntityType="Self.comments" Schema="NET" store:Type="Tables" />
+          <EntitySet Name="group" EntityType="Self.group" Schema="NET" store:Type="Tables" />
+          <EntitySet Name="post" EntityType="Self.post" Schema="NET" store:Type="Tables" />
+          <EntitySet Name="star" EntityType="Self.star" Schema="NET" store:Type="Tables" />
+          <EntitySet Name="user" EntityType="Self.user" Schema="NET" store:Type="Tables" />
+          <AssociationSet Name="author" Association="Self.author">
+            <End Role="user" EntitySet="user" />
+            <End Role="post" EntitySet="post" />
+          </AssociationSet>
+          <AssociationSet Name="group1" Association="Self.group1">
+            <End Role="group" EntitySet="group" />
+            <End Role="post" EntitySet="post" />
+          </AssociationSet>
+          <AssociationSet Name="starpost" Association="Self.starpost">
+            <End Role="post" EntitySet="post" />
+            <End Role="star" EntitySet="star" />
+          </AssociationSet>
+          <AssociationSet Name="user1" Association="Self.user1">
+            <End Role="user" EntitySet="user" />
+            <End Role="comments" EntitySet="comments" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="NETModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="comments">
+          <Key>
+            <PropertyRef Name="commentId" />
+          </Key>
+          <Property Name="commentId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="userId" Type="Int32" />
+          <Property Name="postId" Type="Int32" />
+          <Property Name="content" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="time" Type="DateTime" />
+          <NavigationProperty Name="user" Relationship="Self.user1" FromRole="comments" ToRole="user" />
+        </EntityType>
+        <EntityType Name="group">
+          <Key>
+            <PropertyRef Name="groupId" />
+          </Key>
+          <Property Name="groupId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="groupName" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="starNum" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="post" Relationship="Self.group1" FromRole="group" ToRole="post" />
+        </EntityType>
+        <EntityType Name="post">
+          <Key>
+            <PropertyRef Name="postId" />
+          </Key>
+          <Property Name="postId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="userId" Type="Int32" />
+          <Property Name="groupId" Type="Int32" />
+          <Property Name="content" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="time" Type="DateTime" />
+          <Property Name="title" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="starNum" Type="Int32" />
+          <NavigationProperty Name="group" Relationship="Self.group1" FromRole="post" ToRole="group" />
+          <NavigationProperty Name="user" Relationship="Self.author" FromRole="post" ToRole="user" />
+          <NavigationProperty Name="star" Relationship="Self.starpost" FromRole="post" ToRole="star" />
+        </EntityType>
+        <EntityType Name="star">
+          <Key>
+            <PropertyRef Name="starId" />
+          </Key>
+          <Property Name="starId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="userName" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="postId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="post" Relationship="Self.starpost" FromRole="star" ToRole="post" />
+        </EntityType>
+        <EntityType Name="user">
+          <Key>
+            <PropertyRef Name="userId" />
+          </Key>
+          <Property Name="userId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="userName" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="avatar" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="signature" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="password" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="comments" Relationship="Self.user1" FromRole="user" ToRole="comments" />
+          <NavigationProperty Name="post" Relationship="Self.author" FromRole="user" ToRole="post" />
+        </EntityType>
+        <Association Name="user1">
+          <End Role="user" Type="Self.user" Multiplicity="0..1" />
+          <End Role="comments" Type="Self.comments" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="user">
+              <PropertyRef Name="userId" />
+            </Principal>
+            <Dependent Role="comments">
+              <PropertyRef Name="userId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="group1">
+          <End Role="group" Type="Self.group" Multiplicity="0..1" />
+          <End Role="post" Type="Self.post" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="group">
+              <PropertyRef Name="groupId" />
+            </Principal>
+            <Dependent Role="post">
+              <PropertyRef Name="groupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="author">
+          <End Role="user" Type="Self.user" Multiplicity="0..1" />
+          <End Role="post" Type="Self.post" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="user">
+              <PropertyRef Name="userId" />
+            </Principal>
+            <Dependent Role="post">
+              <PropertyRef Name="userId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="starpost">
+          <End Role="post" Type="Self.post" Multiplicity="1" />
+          <End Role="star" Type="Self.star" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="post">
+              <PropertyRef Name="postId" />
+            </Principal>
+            <Dependent Role="star">
+              <PropertyRef Name="postId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="NETEntities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="comments" EntityType="Self.comments" />
+          <EntitySet Name="group" EntityType="Self.group" />
+          <EntitySet Name="post" EntityType="Self.post" />
+          <EntitySet Name="star" EntityType="Self.star" />
+          <EntitySet Name="user" EntityType="Self.user" />
+          <AssociationSet Name="user1" Association="Self.user1">
+            <End Role="user" EntitySet="user" />
+            <End Role="comments" EntitySet="comments" />
+          </AssociationSet>
+          <AssociationSet Name="group1" Association="Self.group1">
+            <End Role="group" EntitySet="group" />
+            <End Role="post" EntitySet="post" />
+          </AssociationSet>
+          <AssociationSet Name="author" Association="Self.author">
+            <End Role="user" EntitySet="user" />
+            <End Role="post" EntitySet="post" />
+          </AssociationSet>
+          <AssociationSet Name="starpost" Association="Self.starpost">
+            <End Role="post" EntitySet="post" />
+            <End Role="star" EntitySet="star" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="NETModelStoreContainer" CdmEntityContainer="NETEntities1">
+          <EntitySetMapping Name="comments">
+            <EntityTypeMapping TypeName="NETModel.comments">
+              <MappingFragment StoreEntitySet="comments">
+                <ScalarProperty Name="commentId" ColumnName="commentId" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="postId" ColumnName="postId" />
+                <ScalarProperty Name="content" ColumnName="content" />
+                <ScalarProperty Name="time" ColumnName="time" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="group">
+            <EntityTypeMapping TypeName="NETModel.group">
+              <MappingFragment StoreEntitySet="group">
+                <ScalarProperty Name="groupId" ColumnName="groupId" />
+                <ScalarProperty Name="groupName" ColumnName="groupName" />
+                <ScalarProperty Name="starNum" ColumnName="starNum" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="post">
+            <EntityTypeMapping TypeName="NETModel.post">
+              <MappingFragment StoreEntitySet="post">
+                <ScalarProperty Name="postId" ColumnName="postId" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="groupId" ColumnName="groupId" />
+                <ScalarProperty Name="content" ColumnName="content" />
+                <ScalarProperty Name="time" ColumnName="time" />
+                <ScalarProperty Name="title" ColumnName="title" />
+                <ScalarProperty Name="starNum" ColumnName="starNum" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="star">
+            <EntityTypeMapping TypeName="NETModel.star">
+              <MappingFragment StoreEntitySet="star">
+                <ScalarProperty Name="starId" ColumnName="starId" />
+                <ScalarProperty Name="userName" ColumnName="userName" />
+                <ScalarProperty Name="postId" ColumnName="postId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="user">
+            <EntityTypeMapping TypeName="NETModel.user">
+              <MappingFragment StoreEntitySet="user">
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="userName" ColumnName="userName" />
+                <ScalarProperty Name="avatar" ColumnName="avatar" />
+                <ScalarProperty Name="signature" ColumnName="signature" />
+                <ScalarProperty Name="password" ColumnName="password" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="无" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

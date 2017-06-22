@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="NETModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.6" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="comments">
+    <Key>
+      <PropertyRef Name="commentId" />
+    </Key>
+    <Property Name="commentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="userId" Type="int" />
+    <Property Name="postId" Type="int" />
+    <Property Name="content" Type="varchar" MaxLength="500" />
+    <Property Name="time" Type="datetime" Precision="0" />
+  </EntityType>
+  <EntityType Name="group">
+    <Key>
+      <PropertyRef Name="groupId" />
+    </Key>
+    <Property Name="groupId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="groupName" Type="varchar" MaxLength="45" />
+    <Property Name="starNum" Type="varchar" MaxLength="45" />
+  </EntityType>
+  <EntityType Name="post">
+    <Key>
+      <PropertyRef Name="postId" />
+    </Key>
+    <Property Name="postId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="userId" Type="int" />
+    <Property Name="groupId" Type="int" />
+    <Property Name="content" Type="blob" />
+    <Property Name="time" Type="datetime" Precision="0" />
+    <Property Name="title" Type="varchar" MaxLength="200" />
+    <Property Name="starNum" Type="int" />
+  </EntityType>
+  <EntityType Name="star">
+    <Key>
+      <PropertyRef Name="starId" />
+    </Key>
+    <Property Name="starId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="userName" Type="varchar" MaxLength="45" Nullable="false" />
+    <Property Name="postId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="user">
+    <Key>
+      <PropertyRef Name="userId" />
+    </Key>
+    <Property Name="userId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="userName" Type="varchar" MaxLength="45" Nullable="false" />
+    <Property Name="avatar" Type="varchar" MaxLength="45" />
+    <Property Name="signature" Type="varchar" MaxLength="45" />
+    <Property Name="password" Type="varchar" MaxLength="45" />
+  </EntityType>
+  <Association Name="author">
+    <End Role="user" Type="Self.user" Multiplicity="0..1" />
+    <End Role="post" Type="Self.post" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="user">
+        <PropertyRef Name="userId" />
+      </Principal>
+      <Dependent Role="post">
+        <PropertyRef Name="userId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="group1">
+    <End Role="group" Type="Self.group" Multiplicity="0..1" />
+    <End Role="post" Type="Self.post" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="group">
+        <PropertyRef Name="groupId" />
+      </Principal>
+      <Dependent Role="post">
+        <PropertyRef Name="groupId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="starpost">
+    <End Role="post" Type="Self.post" Multiplicity="1" />
+    <End Role="star" Type="Self.star" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="post">
+        <PropertyRef Name="postId" />
+      </Principal>
+      <Dependent Role="star">
+        <PropertyRef Name="postId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <!--生成过程中发现错误:
+警告 6035: 关系“staruser”在关系主端上有一些列不属于表的键的一部分。已排除了此关系。
+        <Association Name="staruser" />-->
+  <Association Name="user1">
+    <End Role="user" Type="Self.user" Multiplicity="0..1" />
+    <End Role="comments" Type="Self.comments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="user">
+        <PropertyRef Name="userId" />
+      </Principal>
+      <Dependent Role="comments">
+        <PropertyRef Name="userId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="NETModelStoreContainer">
+    <EntitySet Name="comments" EntityType="Self.comments" Schema="NET" store:Type="Tables" />
+    <EntitySet Name="group" EntityType="Self.group" Schema="NET" store:Type="Tables" />
+    <EntitySet Name="post" EntityType="Self.post" Schema="NET" store:Type="Tables" />
+    <EntitySet Name="star" EntityType="Self.star" Schema="NET" store:Type="Tables" />
+    <EntitySet Name="user" EntityType="Self.user" Schema="NET" store:Type="Tables" />
+    <AssociationSet Name="author" Association="Self.author">
+      <End Role="user" EntitySet="user" />
+      <End Role="post" EntitySet="post" />
+    </AssociationSet>
+    <AssociationSet Name="group1" Association="Self.group1">
+      <End Role="group" EntitySet="group" />
+      <End Role="post" EntitySet="post" />
+    </AssociationSet>
+    <AssociationSet Name="starpost" Association="Self.starpost">
+      <End Role="post" EntitySet="post" />
+      <End Role="star" EntitySet="star" />
+    </AssociationSet>
+    <AssociationSet Name="user1" Association="Self.user1">
+      <End Role="user" EntitySet="user" />
+      <End Role="comments" EntitySet="comments" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
